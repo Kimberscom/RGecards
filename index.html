@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSS Feed</title>
+    <style>
+        .rss-feed {
+            display: flex;
+            flex-direction: column;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .rss-item {
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+        }
+        .rss-item img {
+            max-width: 100%;
+            height: auto;
+        }
+        .rss-item h3 {
+            margin: 10px 0 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="rss-feed-container" class="rss-feed"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const rssUrl = 'https://autoprotect.rewardgateway.co.uk/Feed/Integration/96c0d291-5ac0-45ff-b82d-b846aa5098d2/dttbnmot';
+            const rssToJsonUrl = 'https://api.rss2json.com/v1/api.json?rss_url=' + encodeURIComponent(rssUrl);
+
+            fetch(rssToJsonUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const items = data.items;
+                    let html = '';
+
+                    items.forEach(item => {
+                        html += '<div class="rss-item">';
+                        if (item.enclosure && item.enclosure.link) {
+                            html += '<img src="' + item.enclosure.link + '" alt="' + item.title + '"/>';
+                        }
+                        html += '<h3><a href="' + item.link + '">' + item.title + '</a></h3>';
+                        html += '<p>' + item.description + '</p>';
+                        html += '</div>';
+                    });
+
+                    document.getElementById('rss-feed-container').innerHTML = html;
+                })
+                .catch(error => console.error('Error fetching the RSS feed:', error));
+        });
+    </script>
+</body>
+</html>
